@@ -22,7 +22,7 @@ import java.time.ZoneId
 class AuthenticationController(private val userService: UserService) {
 
     @PostMapping("/signup")
-    fun registerUser(@RequestBody @JsonView(UserDto.UserView.RegistrationPost::class) userDto: UserDto): ResponseEntity<Any> {
+    fun registerUser(@RequestBody @Validated(UserDto.UserView.RegistrationPost::class) @JsonView(UserDto.UserView.RegistrationPost::class) userDto: UserDto): ResponseEntity<Any> {
 
         if(userService.existsByUsername(userDto.username!!)){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Username is Already Taken!");
@@ -35,5 +35,4 @@ class AuthenticationController(private val userService: UserService) {
         userService.save(userModel)
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel)
     }
-
 }

@@ -8,6 +8,7 @@ import com.ead.authuser.services.UserService
 import com.fasterxml.jackson.annotation.JsonView
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -52,7 +53,7 @@ class UserController(private val userService: UserService): EadLog {
     @PutMapping("/{userId}")
     fun updateUser(
         @PathVariable userId: UUID,
-        @RequestBody @JsonView(UserDto.UserView.UserPut::class) userDto: UserDto
+        @RequestBody @Validated(UserDto.UserView.UserPut::class) @JsonView(UserDto.UserView.UserPut::class) userDto: UserDto
     ): ResponseEntity<Any> {
         log().debug("UPDATE updateUser userId received {} ", userId)
         val userModelOptional: Optional<UserModel> = userService.findById(userId)
@@ -76,7 +77,7 @@ class UserController(private val userService: UserService): EadLog {
     @PutMapping("/{userId}/password")
     fun updatePassword(
         @PathVariable userId: UUID,
-        @RequestBody @JsonView(UserDto.UserView.PasswordPut::class) userDto: UserDto
+        @RequestBody @Validated(UserDto.UserView.PasswordPut::class) @JsonView(UserDto.UserView.PasswordPut::class) userDto: UserDto
     ): ResponseEntity<Any> {
         log().debug("UPDATE updatePassword userId received {} ", userId)
         val userModelOptional: Optional<UserModel> = userService.findById(userId)
@@ -101,7 +102,7 @@ class UserController(private val userService: UserService): EadLog {
     @PutMapping("/{userId}/image")
     fun updateImage(
         @PathVariable userId: UUID,
-        @RequestBody @JsonView(UserDto.UserView.ImagePut::class) userDto: UserDto
+        @RequestBody @Validated(UserDto.UserView.ImagePut::class) @JsonView(UserDto.UserView.ImagePut::class) userDto: UserDto
     ): ResponseEntity<Any> {
         log().debug("UPDATE updateImage userId received {} ", userId)
         val userModelOptional: Optional<UserModel> = userService.findById(userId)
