@@ -3,6 +3,9 @@ package com.ead.authuser.services.impl
 import com.ead.authuser.models.UserModel
 import com.ead.authuser.repositories.UserRepository
 import com.ead.authuser.services.UserService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
@@ -12,6 +15,13 @@ class UserServiceImpl(private val userRepository: UserRepository): UserService {
 
     override fun findAll(): List<UserModel>? =
         userRepository.findAll()
+
+    override fun findAll(spec: Specification<UserModel>, pageable: Pageable): Page<UserModel>? {
+        return userRepository.findAll(spec, pageable)
+    }
+//    override fun findAll(pageable: Pageable): Page<UserModel> {
+//        return userRepository.findAll(pageable)
+//    }
 
     override fun findById(userId: UUID): Optional<UserModel> =
         userRepository.findById(userId)
