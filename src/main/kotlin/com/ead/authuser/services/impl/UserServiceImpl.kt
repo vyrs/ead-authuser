@@ -16,12 +16,9 @@ class UserServiceImpl(private val userRepository: UserRepository): UserService {
     override fun findAll(): List<UserModel>? =
         userRepository.findAll()
 
-    override fun findAll(spec: Specification<UserModel>, pageable: Pageable): Page<UserModel>? {
+    override fun findAll(spec: Specification<UserModel>?, pageable: Pageable): Page<UserModel> {
         return userRepository.findAll(spec, pageable)
     }
-//    override fun findAll(pageable: Pageable): Page<UserModel> {
-//        return userRepository.findAll(pageable)
-//    }
 
     override fun findById(userId: UUID): Optional<UserModel> =
         userRepository.findById(userId)

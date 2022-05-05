@@ -14,6 +14,6 @@ interface UserService {
     fun save(userModel: UserModel): UserModel
     fun existsByUsername(userName: String): Boolean
     fun existsByEmail(email: String): Boolean
-    fun findAll(spec: Specification<UserModel>, pageable: Pageable): Page<UserModel>?
+    fun findAll(spec: Specification<UserModel>?, pageable: Pageable): Page<UserModel>
 //    fun findAll(pageable: Pageable): Page<UserModel>
 }

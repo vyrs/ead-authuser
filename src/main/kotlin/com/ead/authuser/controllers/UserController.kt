@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -26,9 +28,15 @@ import java.util.*
 class UserController(private val userService: UserService): EadLog {
 
     @GetMapping
-    fun getAllUsers(spec: SpecificationTemplate.UserSpec, @PageableDefault(page = 0, size = 10, sort = ["userId"], direction = Sort.Direction.ASC) pageable: Pageable): ResponseEntity<Page<UserModel>> {
-//        val userModelPage: Page<UserModel> = userService.findAll(pageable)
-        val userModelPage: Page<UserModel>? = userService.findAll(spec, pageable)
+    fun getAllUsers(spec: SpecificationTemplate.UserSpec?, @PageableDefault(page = 0, size = 10, sort = ["userId"], direction = Sort.Direction.ASC) pageable: Pageable): ResponseEntity<Page<UserModel>> {
+        val userModelPage: Page<UserModel> = userService.findAll(spec, pageable)
+
+        if (!userModelPage.isEmpty) {
+            userModelPage.forEach { user ->
+                user.add(linkTo(methodOn(UserController::class.java).getOneUser(user.userId!!)).withSelfRel())
+            }
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(userModelPage)
     }
 

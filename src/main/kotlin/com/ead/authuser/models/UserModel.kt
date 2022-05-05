@@ -5,6 +5,7 @@ import com.ead.authuser.enums.UserType
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import org.springframework.hateoas.RepresentationModel
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.*
@@ -39,7 +40,7 @@ class UserModel(
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     var lastUpdateDate: LocalDateTime
-) {
+): RepresentationModel<UserModel>() {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     val userId: UUID? = null
 }
