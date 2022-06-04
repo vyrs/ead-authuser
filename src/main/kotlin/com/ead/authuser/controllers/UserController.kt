@@ -70,7 +70,7 @@ class UserController(private val userService: UserService): EadLog {
         @PathVariable userId: UUID,
         @RequestBody @Validated(UserDto.UserView.UserPut::class) @JsonView(UserDto.UserView.UserPut::class) userDto: UserDto
     ): ResponseEntity<Any> {
-        log().debug("UPDATE updateUser userId received {} ", userId)
+        log().debug("PUT updateUser userId received {} ", userId)
         val userModelOptional: Optional<UserModel> = userService.findById(userId)
 
         return if (!userModelOptional.isPresent) {
@@ -85,6 +85,8 @@ class UserController(private val userService: UserService): EadLog {
 
             userService.save(userModel)
 
+            log().debug("PUT updateUser userModel saved {} ", userModel.toString())
+            log().info("User updated successfully userId {} ", userModel.userId)
             ResponseEntity.status(HttpStatus.OK).body(userModel)
         }
     }
@@ -94,7 +96,7 @@ class UserController(private val userService: UserService): EadLog {
         @PathVariable userId: UUID,
         @RequestBody @Validated(UserDto.UserView.PasswordPut::class) @JsonView(UserDto.UserView.PasswordPut::class) userDto: UserDto
     ): ResponseEntity<Any> {
-        log().debug("UPDATE updatePassword userId received {} ", userId)
+        log().debug("PUT updatePassword userDto received {} ", userDto.toString())
         val userModelOptional: Optional<UserModel> = userService.findById(userId)
 
 
@@ -102,6 +104,7 @@ class UserController(private val userService: UserService): EadLog {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.")
         }
         return if(userModelOptional.get().password != userDto.oldPassword){
+            log().warn("Mismatched old password userId {} ", userId)
             ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Mismatched old password!")
         } else {
             val userModel = userModelOptional.get()
@@ -110,6 +113,9 @@ class UserController(private val userService: UserService): EadLog {
             userModel.lastUpdateDate = LocalDateTime.now(ZoneId.of("UTC"))
 
             userService.save(userModel)
+
+            log().debug("PUT updatePassword userModel saved {} ", userModel.toString())
+            log().info("Password updated successfully userId {} ", userModel.userId)
             ResponseEntity.status(HttpStatus.OK).body("Password updated successfully.")
         }
     }
@@ -119,7 +125,7 @@ class UserController(private val userService: UserService): EadLog {
         @PathVariable userId: UUID,
         @RequestBody @Validated(UserDto.UserView.ImagePut::class) @JsonView(UserDto.UserView.ImagePut::class) userDto: UserDto
     ): ResponseEntity<Any> {
-        log().debug("UPDATE updateImage userId received {} ", userId)
+        log().debug("PUT updateImage userDto received {} ", userDto.toString())
         val userModelOptional: Optional<UserModel> = userService.findById(userId)
 
         return if (!userModelOptional.isPresent) {
@@ -131,6 +137,8 @@ class UserController(private val userService: UserService): EadLog {
             userModel.lastUpdateDate = LocalDateTime.now(ZoneId.of("UTC"))
 
             userService.save(userModel)
+            log().debug("PUT updateImage userModel saved {} ", userModel.toString())
+            log().info("Image updated successfully userId {} ", userModel.userId)
             ResponseEntity.status(HttpStatus.OK).body(userModel)
         }
     }
