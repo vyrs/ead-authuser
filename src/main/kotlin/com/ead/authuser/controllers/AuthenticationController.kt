@@ -38,7 +38,7 @@ class AuthenticationController(private val userService: UserService):EadLog {
 
         val userModel = userDto.toModel()
         userService.save(userModel)
-        log().debug("POST registerUser userModel saved {} ", userModel.toString())
+        log().debug("POST registerUser userId saved {} ", userModel.userId)
         log().info("User saved successfully userId {} ", userModel.userId)
         return ResponseEntity.status(HttpStatus.CREATED).body(userModel)
     }
