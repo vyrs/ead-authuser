@@ -5,7 +5,8 @@ import com.ead.authuser.configs.log
 import com.ead.authuser.dtos.UserDto
 import com.ead.authuser.models.UserModel
 import com.ead.authuser.services.UserService
-import com.ead.authuser.specifications.SpecificationTemplate
+import com.ead.authuser.specifications.SpecificationTemplate.UserSpec
+import com.ead.authuser.specifications.SpecificationTemplate.userCourseId
 import com.fasterxml.jackson.annotation.JsonView
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -28,14 +29,23 @@ import java.util.*
 class UserController(private val userService: UserService): EadLog {
 
     @GetMapping
-    fun getAllUsers(spec: SpecificationTemplate.UserSpec?, @PageableDefault(page = 0, size = 10, sort = ["userId"], direction = Sort.Direction.ASC) pageable: Pageable): ResponseEntity<Page<UserModel>> {
-        val userModelPage: Page<UserModel> = userService.findAll(spec, pageable)
+    fun getAllUsers(spec: UserSpec?,
+                    @PageableDefault(page = 0, size = 10, sort = ["userId"], direction = Sort.Direction.ASC) pageable: Pageable,
+                    @RequestParam(required = false) courseId: UUID?
+    ): ResponseEntity<Page<UserModel>> {
 
-        if (!userModelPage.isEmpty) {
-            userModelPage.forEach { user ->
-                user.add(linkTo(methodOn(UserController::class.java).getOneUser(user.userId!!)).withSelfRel())
-            }
-        }
+        val userModelPage = if (courseId != null) {
+            userService.findAll(userCourseId(courseId).and(spec), pageable)
+        } else {
+            userService.findAll(spec, pageable)
+        }.map { user -> user.add(linkTo(methodOn(UserController::class.java).getOneUser(user.userId!!)).withSelfRel()) }
+
+
+//        if (!userModelPage.isEmpty) {
+//            userModelPage.forEach { user ->
+//                user.add(linkTo(methodOn(UserController::class.java).getOneUser(user.userId!!)).withSelfRel())
+//            }
+//        }
 
         return ResponseEntity.status(HttpStatus.OK).body(userModelPage)
     }
