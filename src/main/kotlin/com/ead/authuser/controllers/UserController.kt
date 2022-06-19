@@ -40,13 +40,6 @@ class UserController(private val userService: UserService): EadLog {
             userService.findAll(spec, pageable)
         }.map { user -> user.add(linkTo(methodOn(UserController::class.java).getOneUser(user.userId!!)).withSelfRel()) }
 
-
-//        if (!userModelPage.isEmpty) {
-//            userModelPage.forEach { user ->
-//                user.add(linkTo(methodOn(UserController::class.java).getOneUser(user.userId!!)).withSelfRel())
-//            }
-//        }
-
         return ResponseEntity.status(HttpStatus.OK).body(userModelPage)
     }
 
