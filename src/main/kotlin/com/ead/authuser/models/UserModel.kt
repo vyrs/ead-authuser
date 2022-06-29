@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.hateoas.RepresentationModel
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import javax.persistence.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -29,7 +29,7 @@ class UserModel(
     val userStatus: UserStatus,
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    val userType: UserType,
+    var userType: UserType,
     @Column(length = 20)
     var phoneNumber: String,
     @Column(length = 20)
@@ -48,4 +48,8 @@ class UserModel(
 ): RepresentationModel<UserModel>() {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     val userId: UUID? = null
+
+    fun convertToUserCourseModel(courseId: UUID): UserCourseModel {
+        return UserCourseModel(courseId, this)
+    }
 }

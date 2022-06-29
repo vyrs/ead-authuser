@@ -3,8 +3,7 @@ package com.ead.authuser.dtos
 import java.util.UUID
 import javax.validation.constraints.NotNull
 
-data class UserCourseDto(
-    val userId: UUID,
+data class InstructorDto(
     @field:NotNull
-    val courseId: UUID
+    val userId: UUID
 )

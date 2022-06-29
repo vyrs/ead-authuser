@@ -28,20 +28,20 @@ class UserCourseController(private val courseClient: CourseClient, private val u
         return ResponseEntity.status(HttpStatus.OK).body(courseClient.getAllCoursesByUser(userId, pageable))
     }
 
-//    @PostMapping("/users/{userId}/courses/subscription")
-//    fun saveSubscriptionUserInCourse(
-//        @PathVariable(value = "userId") userId: UUID,
-//        @RequestBody userCourseDto: @Valid UserCourseDto
-//    ): ResponseEntity<Any> {
-//        val userModelOptional = userService.findById(userId)
-//        if (!userModelOptional.isPresent) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.")
-//        }
-//        if (userCourseService.existsByUserAndCourseId(userModelOptional.get(), userCourseDto.getCourseId())) {
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: subscription already exists!")
-//        }
-//        val userCourseModel =
-//            userCourseService.save(userModelOptional.get().convertToUserCourseModel(userCourseDto.getCourseId()))
-//        return ResponseEntity.status(HttpStatus.CREATED).body(userCourseModel)
-//    }
+    @PostMapping("/users/{userId}/courses/subscription")
+    fun saveSubscriptionUserInCourse(
+        @PathVariable(value = "userId") userId: UUID,
+        @RequestBody userCourseDto: @Valid UserCourseDto
+    ): ResponseEntity<Any> {
+        val userModelOptional = userService.findById(userId)
+        if (!userModelOptional.isPresent) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.")
+        }
+        if (userCourseService.existsByUserAndCourseId(userModelOptional.get(), userCourseDto.courseId)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: subscription already exists!")
+        }
+        val userCourseModel =
+            userCourseService.save(userModelOptional.get().convertToUserCourseModel(userCourseDto.courseId))
+        return ResponseEntity.status(HttpStatus.CREATED).body(userCourseModel)
+    }
 }
