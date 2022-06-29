@@ -1,5 +1,7 @@
 package com.ead.authuser.services.impl
 
+import com.ead.authuser.models.UserCourseModel
+import com.ead.authuser.repositories.UserCourseRepository
 import com.ead.authuser.models.UserModel
 import com.ead.authuser.repositories.UserRepository
 import com.ead.authuser.services.UserService
@@ -11,7 +13,10 @@ import java.util.*
 import javax.transaction.Transactional
 
 @Service
-class UserServiceImpl(private val userRepository: UserRepository): UserService {
+class UserServiceImpl(
+    private val userRepository: UserRepository,
+    private val userCourseRepository: UserCourseRepository
+): UserService {
 
     override fun findAll(): List<UserModel>? =
         userRepository.findAll()
@@ -24,8 +29,15 @@ class UserServiceImpl(private val userRepository: UserRepository): UserService {
         userRepository.findById(userId)
 
     @Transactional
-    override fun deleteUser(userModel: UserModel) =
+    override fun deleteUser(userModel: UserModel) {
+        val userCourseModelList: List<UserCourseModel> =
+            userCourseRepository.findAllUserCourseIntoUser(userModel.userId!!)
+        if (userCourseModelList.isNotEmpty()) {
+            userCourseRepository.deleteAll(userCourseModelList)
+        }
         userRepository.delete(userModel)
+
+    }
 
     override fun save(userModel: UserModel): UserModel =
         userRepository.save(userModel)
@@ -35,6 +47,5 @@ class UserServiceImpl(private val userRepository: UserRepository): UserService {
 
     override fun existsByEmail(email: String): Boolean =
         userRepository.existsByEmail(email)
-
 
 }
