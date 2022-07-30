@@ -1,5 +1,6 @@
 package com.ead.authuser.services.impl
 
+import com.ead.authuser.clients.CourseClient
 import com.ead.authuser.models.UserCourseModel
 import com.ead.authuser.repositories.UserCourseRepository
 import com.ead.authuser.models.UserModel
@@ -15,7 +16,8 @@ import javax.transaction.Transactional
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
-    private val userCourseRepository: UserCourseRepository
+    private val userCourseRepository: UserCourseRepository,
+    private val courseClient: CourseClient
 ): UserService {
 
     override fun findAll(): List<UserModel>? =
@@ -32,11 +34,17 @@ class UserServiceImpl(
     override fun deleteUser(userModel: UserModel) {
         val userCourseModelList: List<UserCourseModel> =
             userCourseRepository.findAllUserCourseIntoUser(userModel.userId!!)
+
+        var deleteUserCourseInCourse = false
         if (userCourseModelList.isNotEmpty()) {
             userCourseRepository.deleteAll(userCourseModelList)
+            deleteUserCourseInCourse = true
         }
         userRepository.delete(userModel)
 
+        if(deleteUserCourseInCourse){
+            courseClient.deleteUserInCourse(userModel.userId)
+        }
     }
 
     override fun save(userModel: UserModel): UserModel =

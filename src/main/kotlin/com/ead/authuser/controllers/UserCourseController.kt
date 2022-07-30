@@ -5,7 +5,6 @@ import com.ead.authuser.dtos.CourseDto
 import com.ead.authuser.dtos.UserCourseDto
 import com.ead.authuser.services.UserCourseService
 import com.ead.authuser.services.UserService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -15,6 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
+
 
 @RestController
 @CrossOrigin(origins = ["*"], maxAge = 3600)
@@ -43,5 +43,14 @@ class UserCourseController(private val courseClient: CourseClient, private val u
         val userCourseModel =
             userCourseService.save(userModelOptional.get().convertToUserCourseModel(userCourseDto.courseId))
         return ResponseEntity.status(HttpStatus.CREATED).body(userCourseModel)
+    }
+
+    @DeleteMapping("/users/courses/{courseId}")
+    fun deleteUserCourseByCourse(@PathVariable(value = "courseId") courseId: UUID): ResponseEntity<Any> {
+        if (!userCourseService.existsByCourseId(courseId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("UserCourse not found.")
+        }
+        userCourseService.deleteUserCourseByCourse(courseId)
+        return ResponseEntity.status(HttpStatus.OK).body("UserCourse deleted successfully.")
     }
 }

@@ -39,4 +39,9 @@ class CourseClient(private val restTemplate: RestTemplate, private val utilsServ
         log().info("Ending request /courses userId {} ", userId)
         return result!!.body!!
     }
+
+    fun deleteUserInCourse(userId: UUID) {
+        val url = "$REQUEST_URL_COURSE/courses/users/$userId"
+        restTemplate.exchange(url, HttpMethod.DELETE, null, String::class.java)
+    }
 }
