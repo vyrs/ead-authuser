@@ -30,15 +30,12 @@ class UserController(private val userService: UserService): EadLog {
 
     @GetMapping
     fun getAllUsers(spec: UserSpec?,
-                    @PageableDefault(page = 0, size = 10, sort = ["userId"], direction = Sort.Direction.ASC) pageable: Pageable,
-                    @RequestParam(required = false) courseId: UUID?
+                    @PageableDefault(page = 0, size = 10, sort = ["userId"],
+                        direction = Sort.Direction.ASC) pageable: Pageable
     ): ResponseEntity<Page<UserModel>> {
 
-        val userModelPage = if (courseId != null) {
-            userService.findAll(userCourseId(courseId).and(spec), pageable)
-        } else {
-            userService.findAll(spec, pageable)
-        }.map { user -> user.add(linkTo(methodOn(UserController::class.java).getOneUser(user.userId!!)).withSelfRel()) }
+        val userModelPage = userService.findAll(spec, pageable)
+            .map { user -> user.add(linkTo(methodOn(UserController::class.java).getOneUser(user.userId!!)).withSelfRel()) }
 
         return ResponseEntity.status(HttpStatus.OK).body(userModelPage)
     }

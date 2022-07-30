@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
-import java.util.*
+import java.util.UUID
 
 
 @Component
@@ -38,10 +38,5 @@ class CourseClient(private val restTemplate: RestTemplate, private val utilsServ
         }
         log().info("Ending request /courses userId {} ", userId)
         return result!!.body!!
-    }
-
-    fun deleteUserInCourse(userId: UUID) {
-        val url = "$REQUEST_URL_COURSE/courses/users/$userId"
-        restTemplate.exchange(url, HttpMethod.DELETE, null, String::class.java)
     }
 }

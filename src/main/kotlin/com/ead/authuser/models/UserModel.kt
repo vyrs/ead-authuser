@@ -40,16 +40,8 @@ class UserModel(
     val creationDate: LocalDateTime,
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    var lastUpdateDate: LocalDateTime,
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    val usersCourses: Set<UserCourseModel>? = null
+    var lastUpdateDate: LocalDateTime
 ): RepresentationModel<UserModel>() {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     val userId: UUID? = null
-
-    fun convertToUserCourseModel(courseId: UUID): UserCourseModel {
-        return UserCourseModel(courseId, this)
-    }
 }
