@@ -10,10 +10,14 @@ import java.util.*
 interface UserService {
     fun findAll(): List<UserModel>?
     fun findById(userId: UUID): Optional<UserModel>
-    fun deleteUser(userModel: UserModel)
+    fun delete(userModel: UserModel)
     fun save(userModel: UserModel): UserModel
     fun existsByUsername(userName: String): Boolean
     fun existsByEmail(email: String): Boolean
     fun findAll(spec: Specification<UserModel>?, pageable: Pageable): Page<UserModel>
-//    fun findAll(pageable: Pageable): Page<UserModel>
+
+    fun saveUser(userModel: UserModel): UserModel
+    fun deleteUser(userModel: UserModel)
+    fun updateUser(userModel: UserModel): UserModel
+    fun updatePassword(userModel: UserModel): UserModel
 }

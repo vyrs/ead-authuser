@@ -6,7 +6,6 @@ import com.ead.authuser.dtos.UserDto
 import com.ead.authuser.models.UserModel
 import com.ead.authuser.services.UserService
 import com.ead.authuser.specifications.SpecificationTemplate.UserSpec
-import com.ead.authuser.specifications.SpecificationTemplate.userCourseId
 import com.fasterxml.jackson.annotation.JsonView
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

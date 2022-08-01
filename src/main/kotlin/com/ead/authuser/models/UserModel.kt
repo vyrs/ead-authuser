@@ -1,15 +1,17 @@
 package com.ead.authuser.models
 
+import com.ead.authuser.dtos.UserEventDto
 import com.ead.authuser.enums.UserStatus
 import com.ead.authuser.enums.UserType
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
+import org.springframework.beans.BeanUtils
 import org.springframework.hateoas.RepresentationModel
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
@@ -42,6 +44,14 @@ class UserModel(
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     var lastUpdateDate: LocalDateTime
 ): RepresentationModel<UserModel>() {
+    fun convertToUserEventDto(): UserEventDto {
+        val userEventDto = UserEventDto()
+        BeanUtils.copyProperties(this, userEventDto)
+        userEventDto.userType = this.userType.toString()
+        userEventDto.userStatus = this.userStatus.toString()
+        return userEventDto
+    }
+
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     val userId: UUID? = null
 }
