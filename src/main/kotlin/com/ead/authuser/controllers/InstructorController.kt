@@ -24,7 +24,7 @@ class InstructorController(private val userService: UserService) {
             val userModel = userModelOptional.get()
             userModel.userType = UserType.INSTRUCTOR
             userModel.lastUpdateDate = LocalDateTime.now(ZoneId.of("UTC"))
-            userService.save(userModel)
+            userService.updateUser(userModel)
             ResponseEntity.status(HttpStatus.OK).body(userModel)
         }
     }

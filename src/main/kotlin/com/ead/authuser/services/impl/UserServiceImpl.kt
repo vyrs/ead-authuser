@@ -17,7 +17,6 @@ import javax.transaction.Transactional
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
-    private val courseClient: CourseClient,
     private val userEventPublisher: UserEventPublisher
 ): UserService {
 
@@ -53,16 +52,23 @@ class UserServiceImpl(
         return userModel
     }
 
+    @Transactional
     override fun deleteUser(userModel: UserModel) {
-        TODO("Not yet implemented")
+        delete(userModel)
+
+        userEventPublisher.publishUserEvent(userModel.convertToUserEventDto(), ActionType.DELETE)
     }
 
+    @Transactional
     override fun updateUser(userModel: UserModel): UserModel {
-        TODO("Not yet implemented")
+        val userUpdated = save(userModel)
+
+        userEventPublisher.publishUserEvent(userUpdated.convertToUserEventDto(), ActionType.UPDATE)
+        return userModel
     }
 
     override fun updatePassword(userModel: UserModel): UserModel {
-        TODO("Not yet implemented")
+        return save(userModel)
     }
 
 

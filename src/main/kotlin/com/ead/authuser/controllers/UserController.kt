@@ -82,7 +82,7 @@ class UserController(private val userService: UserService): EadLog {
             userModel.cpf = userDto.cpf!!
             userModel.lastUpdateDate = LocalDateTime.now(ZoneId.of("UTC"))
 
-            userService.save(userModel)
+            userService.updateUser(userModel)
 
             log().debug("PUT updateUser userId saved {} ", userModel.userId)
             log().info("User updated successfully userId {} ", userModel.userId)
@@ -111,7 +111,7 @@ class UserController(private val userService: UserService): EadLog {
             userModel.password = userDto.password!!
             userModel.lastUpdateDate = LocalDateTime.now(ZoneId.of("UTC"))
 
-            userService.save(userModel)
+            userService.updatePassword(userModel)
 
             log().debug("PUT updatePassword userId saved {} ", userModel.userId)
             log().info("Password updated successfully userId {} ", userModel.userId)
@@ -135,7 +135,7 @@ class UserController(private val userService: UserService): EadLog {
             userModel.imageUrl = userDto.imageUrl
             userModel.lastUpdateDate = LocalDateTime.now(ZoneId.of("UTC"))
 
-            userService.save(userModel)
+            userService.updateUser(userModel)
             log().debug("PUT updateImage userId saved {} ", userModel.userId)
             log().info("Image updated successfully userId {} ", userModel.userId)
             ResponseEntity.status(HttpStatus.OK).body(userModel)
