@@ -1,6 +1,5 @@
 package com.ead.authuser.services.impl
 
-import com.ead.authuser.clients.CourseClient
 import com.ead.authuser.enums.ActionType
 import com.ead.authuser.models.UserModel
 import com.ead.authuser.publishers.UserEventPublisher
