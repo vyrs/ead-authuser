@@ -2,6 +2,7 @@ package com.ead.authuser.dtos
 
 import com.ead.authuser.enums.UserStatus
 import com.ead.authuser.enums.UserType
+import com.ead.authuser.models.RoleModel
 import com.ead.authuser.models.UserModel
 import com.ead.authuser.validation.UsernameConstraint
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -56,11 +57,11 @@ data class UserDto(
     }
 }
 
-fun UserDto.toModel() =
+fun UserDto.toModel(role: RoleModel, passwordEncoded: String) =
     UserModel(
         username!!,
         email!!,
-        password!!,
+        passwordEncoded,
         fullName!!,
         UserStatus.ACTIVE,
         UserType.STUDENT,
@@ -68,5 +69,6 @@ fun UserDto.toModel() =
         cpf!!,
         imageUrl,
         LocalDateTime.now(ZoneId.of("UTC")),
-        LocalDateTime.now(ZoneId.of("UTC"))
+        LocalDateTime.now(ZoneId.of("UTC")),
+        setOf(role)
     )
