@@ -49,9 +49,8 @@ class UserDetailsImpl(
 
     companion object {
         fun build(userModel: UserModel): UserDetailsImpl {
-            val authorities: List<GrantedAuthority> = userModel.roles.stream()
-                .map { role -> SimpleGrantedAuthority(role.authority) }
-                .collect(Collectors.toList())
+            val authorities: List<GrantedAuthority> = userModel.roles.map { role -> SimpleGrantedAuthority(role.authority) }
+
             return UserDetailsImpl(
                 userModel.userId!!,
                 userModel.fullName,

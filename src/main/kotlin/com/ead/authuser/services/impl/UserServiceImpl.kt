@@ -47,7 +47,7 @@ class UserServiceImpl(
     override fun saveUser(userModel: UserModel): UserModel {
         val userSaved = save(userModel)
 
-//        userEventPublisher.publishUserEvent(userSaved.convertToUserEventDto(), ActionType.CREATE)
+        userEventPublisher.publishUserEvent(userSaved.convertToUserEventDto(), ActionType.CREATE)
         return userModel
     }
 
