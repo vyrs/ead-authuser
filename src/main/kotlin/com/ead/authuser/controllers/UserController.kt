@@ -2,6 +2,8 @@ package com.ead.authuser.controllers
 
 import com.ead.authuser.configs.EadLog
 import com.ead.authuser.configs.log
+import com.ead.authuser.configs.security.AuthenticationCurrentUserService
+import com.ead.authuser.configs.security.UserDetailsImpl
 import com.ead.authuser.dtos.UserDto
 import com.ead.authuser.models.UserModel
 import com.ead.authuser.services.UserService
@@ -15,6 +17,10 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.Authentication
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
@@ -25,13 +31,21 @@ import java.util.*
 @RestController
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RequestMapping("/users")
-class UserController(private val userService: UserService): EadLog {
+class UserController(
+    private val userService: UserService,
+    private val authenticationCurrentUserService: AuthenticationCurrentUserService
+): EadLog {
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     fun getAllUsers(spec: UserSpec?,
                     @PageableDefault(page = 0, size = 10, sort = ["userId"],
-                        direction = Sort.Direction.ASC) pageable: Pageable
+                        direction = Sort.Direction.ASC) pageable: Pageable,
+                    authentication: Authentication
     ): ResponseEntity<Page<UserModel>> {
+
+        val userDetails: UserDetails = authentication.principal as UserDetailsImpl
+        log().info("Authentication {}", userDetails.username)
 
         val userModelPage = userService.findAll(spec, pageable)
             .map { user -> user.add(linkTo(methodOn(UserController::class.java).getOneUser(user.userId!!)).withSelfRel()) }
@@ -39,14 +53,19 @@ class UserController(private val userService: UserService): EadLog {
         return ResponseEntity.status(HttpStatus.OK).body(userModelPage)
     }
 
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @GetMapping("/{userId}")
     fun getOneUser(@PathVariable userId: UUID): ResponseEntity<Any> {
-        val userModelOptional = userService.findById(userId)
-
-        return if(!userModelOptional.isPresent){
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-        } else{
-            ResponseEntity.status(HttpStatus.OK).body(userModelOptional.get());
+        val currentUserId: UUID = authenticationCurrentUserService.currentUser.userId
+        return if (currentUserId == userId) {
+            val userModelOptional = userService.findById(userId)
+            if (!userModelOptional.isPresent) {
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.")
+            } else {
+                ResponseEntity.status(HttpStatus.OK).body(userModelOptional.get())
+            }
+        } else {
+            throw AccessDeniedException("Forbidden")
         }
     }
 
