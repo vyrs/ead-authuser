@@ -7,18 +7,13 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
+import java.util.*
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class AuthenticationJwtFilter : OncePerRequestFilter() {
-
-//    @Autowired
-//    private val jwtProvider: JwtProvider = JwtProvider()
-//
-//    @Autowired
-//    private val userDetailsService: UserDetailsServiceImpl? = null
 
     @Autowired
     private lateinit var jwtProvider: JwtProvider
@@ -35,8 +30,8 @@ class AuthenticationJwtFilter : OncePerRequestFilter() {
         try {
             val jwtStr = getTokenHeader(httpServletRequest)
             if (jwtStr != null && jwtProvider.validateJwt(jwtStr)) {
-                val username = jwtProvider.getUsernameJwt(jwtStr)
-                val userDetails = userDetailsService.loadUserByUsername(username)
+                val userId = jwtProvider.getSubjectJwt(jwtStr)
+                val userDetails = userDetailsService.loadUserById(UUID.fromString(userId))
                 val authentication = UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.authorities
                 )

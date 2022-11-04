@@ -18,16 +18,23 @@ class JwtProvider: EadLog {
     private val jwtExpirationMs = 0
     
     fun generateJwt(authentication: Authentication): String {
-        val userPrincipal: UserDetails = authentication.principal as UserDetailsImpl
+        val userPrincipal: UserDetailsImpl = authentication.principal as UserDetailsImpl
+
+//        val roles = userPrincipal.authorities.stream()
+//            .map { role: GrantedAuthority -> role.authority }.collect(Collectors.joining(","))
+
+        val roles = userPrincipal.authorities.joinToString(",")
+
         return Jwts.builder()
-            .setSubject(userPrincipal.username)
+            .setSubject(userPrincipal.userId.toString())
+            .claim("roles", roles)
             .setIssuedAt(Date())
             .setExpiration(Date(Date().time + jwtExpirationMs))
             .signWith(SignatureAlgorithm.HS512, jwtSecret)
             .compact()
     }
 
-    fun getUsernameJwt(token: String): String {
+    fun getSubjectJwt(token: String): String {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).body.subject
     }
 

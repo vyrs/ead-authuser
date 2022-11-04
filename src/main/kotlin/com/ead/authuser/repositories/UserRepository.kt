@@ -14,4 +14,7 @@ interface UserRepository: JpaRepository<UserModel, UUID>, JpaSpecificationExecut
 
     @EntityGraph(attributePaths = ["roles"], type = EntityGraph.EntityGraphType.FETCH)
     fun findByUsername(username: String): Optional<UserModel>
+
+    @EntityGraph(attributePaths = ["roles"], type = EntityGraph.EntityGraphType.FETCH)
+    override fun findById(userId: UUID): Optional<UserModel>
 }
