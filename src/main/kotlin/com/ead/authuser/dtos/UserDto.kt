@@ -70,5 +70,5 @@ fun UserDto.toModel(role: RoleModel, passwordEncoded: String) =
         imageUrl,
         LocalDateTime.now(ZoneId.of("UTC")),
         LocalDateTime.now(ZoneId.of("UTC")),
-        setOf(role)
+        mutableSetOf(role)
     )

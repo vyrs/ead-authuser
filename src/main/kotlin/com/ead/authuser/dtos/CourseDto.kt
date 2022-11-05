@@ -8,7 +8,7 @@ data class CourseDto(
     val courseId: UUID,
     val name: String,
     val description: String,
-    val imageUrl: String,
+    val imageUrl: String?,
     val courseStatus: CourseStatus,
     val userInstructor: UUID?,
     val courseLevel: CourseLevel

@@ -11,9 +11,12 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
+import org.springframework.util.MultiValueMap
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import java.util.*
@@ -27,22 +30,26 @@ class CourseClient(private val restTemplate: RestTemplate, private val utilsServ
 
 //    @Retry(name = "retryInstance", fallbackMethod = "retryfallback")
     @CircuitBreaker(name = "circuitbreakerInstance")
-    fun getAllCoursesByUser(userId: UUID, pageable: Pageable): Page<CourseDto> {
+    fun getAllCoursesByUser(userId: UUID, pageable: Pageable, token: String): Page<CourseDto> {
         var result: ResponseEntity<ResponsePageDto<CourseDto>>? = null
+
+        val headers = HttpHeaders()
+        headers["Authorization"] = token
+        val requestEntity: HttpEntity<String> = HttpEntity<String>("parameters", headers)
+
+
         val url = REQUEST_URL_COURSE + utilsService.createUrlGetAllCoursesByUser(userId, pageable)
         log().debug("Request URL: {} ", url)
         log().info("Request URL: {} ", url)
-        try {
-            val responseType: ParameterizedTypeReference<ResponsePageDto<CourseDto>> =
-                object : ParameterizedTypeReference<ResponsePageDto<CourseDto>>() {}
-            result = restTemplate.exchange(url, HttpMethod.GET, null, responseType)
-            val searchResult = result.body!!.content
-            log().debug("Response Number of Elements: {} ", searchResult.size)
-        } catch (e: HttpStatusCodeException) {
-            log().error("Error request /courses {} ", e)
-        }
+
+        val responseType: ParameterizedTypeReference<ResponsePageDto<CourseDto>> =
+            object : ParameterizedTypeReference<ResponsePageDto<CourseDto>>() {}
+        result = restTemplate.exchange(url, HttpMethod.GET, requestEntity, responseType)
+        val searchResult = result.body!!.content
+        log().debug("Response Number of Elements: {} ", searchResult.size)
+
         log().info("Ending request /courses userId {} ", userId)
-        return result!!.body!!
+        return result.body!!
     }
 
     fun circuitbreakerfallback(userId: UUID, pageable: Pageable, t: Throwable): Page<CourseDto> {
