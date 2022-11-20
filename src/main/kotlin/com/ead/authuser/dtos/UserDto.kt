@@ -57,14 +57,14 @@ data class UserDto(
     }
 }
 
-fun UserDto.toModel(role: RoleModel, passwordEncoded: String) =
+fun UserDto.toModel(role: RoleModel, passwordEncoded: String, userType: UserType) =
     UserModel(
         username!!,
         email!!,
         passwordEncoded,
         fullName!!,
         UserStatus.ACTIVE,
-        UserType.STUDENT,
+        userType,
         phoneNumber!!,
         cpf!!,
         imageUrl,
